@@ -46,10 +46,12 @@ Snipe.config = {
 --- being the string value of the item to show
 ---
 ---@generic T
+---@generic M
 ---@param producer fun(): table<T>, table<string> (function) Function
 ---@param callback fun(meta: T, index: integer) (function) Function
+---@param menu_metadata ?M
 ---@return table { open = fun(), close = fun(), is_open = fun() } : Table of menu functions
-Snipe.menu = function(producer, callback)
+Snipe.menu = function(producer, callback, menu_metadata)
   local window_unset = -1
   local buffer = H.create_buffer()
   local state = {
@@ -148,6 +150,7 @@ Snipe.menu = function(producer, callback)
           open = open,
           close = close,
           is_open = is_open,
+          metadata = menu_metadata,
         },
         buf = state.buffer,
       },
@@ -203,10 +206,12 @@ end
 --- closed
 ---
 ---@generic T
+---@generic M
 ---@param producer fun(): table<T>, table<string> (function) Function
 ---@param callback fun(meta: T, index: integer) (function) Function
-Snipe.create_menu_toggler = function(producer, callback)
-  local menu = Snipe.menu(producer, callback)
+---@param menu_etadata ?M
+Snipe.create_menu_toggler = function(producer, callback, menu_metadata)
+  local menu = Snipe.menu(producer, callback, menu_metadata)
   return function()
     if menu.is_open() then
       menu.close()
